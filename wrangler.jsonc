@@ -1,0 +1,49 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "flarepulse",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-13",
+  "observability": {
+    "enabled": true
+  },
+  // The built React client is served as static assets from this same Worker.
+  // "/api/*" hits the Worker first; everything else falls back to index.html
+  // so client-side routing works.
+  "assets": {
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  // One binding, `DB`, because that is the name every query in src/ uses. The id
+  // is a placeholder: local dev and the Vitest pool never read it, `npm run setup`
+  // writes the real one after creating the database, and the Deploy to Cloudflare
+  // button rewrites it in the fork it creates. docs/DEPLOY.md is the runbook.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "flarepulse",
+      "database_id": "REPLACE_WITH_YOUR_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "MONITOR_HUB",
+        "class_name": "MonitorHub"
+      }
+    ]
+  },
+  // SQLite is the only Durable Object storage backend on the Workers Free plan.
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["MonitorHub"]
+    }
+  ],
+  // One trigger at the platform minimum. This is also why the check-interval
+  // floor is 60s and the UI says so plainly instead of faking finer intervals.
+  "triggers": {
+    "crons": ["* * * * *"]
+  }
+}

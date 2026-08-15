@@ -1,0 +1,1115 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+/* shadcn/ui neutral base. Light and dark both ship; the toggle defaults to
+   the system preference. */
+:root {
+  /* Lifted from shadcn's 0.625rem so a card reads as a squircle rather than a
+     box. Every `rounded-*` utility derives from this one value, so the whole
+     app moves together. */
+  --radius: 0.875rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+
+  /* Status semantics. Every dot, bar and pill on the page reads from these
+     four, so the palette is one place. Maintenance is blue, not amber: planned
+     work is not a problem, and reusing the warning colour would say it was. */
+  --up: oklch(0.58 0.15 148);
+  --degraded: oklch(0.72 0.16 78);
+  --down: oklch(0.55 0.22 27);
+  --pending: oklch(0.65 0.02 255);
+  --maintenance: oklch(0.58 0.14 250);
+
+  /* The heartbeat bar's own fills, matching the reference design. Deliberately
+     not `--up`/`--degraded`/`--down`: those five are read as text through
+     `text-up` and friends, and the bar's bright emerald would fail contrast as
+     a glyph. A fill nobody has to read can be as bright as the reference. */
+  --up-bar: oklch(0.78 0.19 152);
+  --degraded-bar: oklch(0.82 0.16 82);
+  --down-bar: oklch(0.63 0.23 27);
+  --pending-bar: oklch(0.9 0.01 255);
+
+  /* Motion, copied from transitions.dev's shared scale (DECISIONS #11). Only
+     the groups this page has an interaction for are here, and every colour a
+     recipe shipped as a hex value points at a token above instead — so dark
+     mode is the same implementation rather than a second one. */
+  --duration-fast: 250ms;
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-linear: linear;
+
+  /* Tabs sliding — the hero's window switcher. */
+  --tabs-dur: 250ms;
+  --tabs-ease: var(--ease-smooth-out);
+  --tabs-bar-bg: var(--muted);
+  --tabs-pill-bg: var(--card);
+  --tabs-text-muted: var(--muted-foreground);
+  --tabs-text-active: var(--foreground);
+
+  /* Accordion expand — the monitor card's response-time panel. */
+  --acc-expand: 250ms;
+  --acc-collapse: 250ms;
+  --acc-chevron: 250ms;
+  --acc-ease: var(--ease-smooth-out);
+
+  /* Number pop-in — a value a check just changed. */
+  --digit-dur: 500ms;
+  --digit-distance: 8px;
+  --digit-blur: 2px;
+  --digit-ease: cubic-bezier(0.34, 1.45, 0.64, 1);
+  --digit-dir-x: 0;
+  --digit-dir-y: 1;
+
+  /* Texts reveal — the hero copy on first paint. */
+  --stagger-dur: 500ms;
+  --stagger-distance: 12px;
+  --stagger-stagger: 40ms;
+  --stagger-blur: 3px;
+  --stagger-ease: var(--ease-smooth-out);
+
+  /* Shimmer text — copy that means "working on it". */
+  --shimmer-dur: 2000ms;
+  --shimmer-band: 400%;
+  --shimmer-ease: var(--ease-linear);
+  --shimmer-base: var(--muted-foreground);
+  --shimmer-highlight: var(--foreground);
+
+  /* ── The seven transitions ──────────────────────────────────────────────────── */
+
+  /* 05 menu dropdown — the admin lists' row-action menu. */
+  --dropdown-open-dur: 250ms;
+  --dropdown-close-dur: 150ms;
+  --dropdown-pre-scale: 0.97;
+  --dropdown-closing-scale: 0.99;
+  --dropdown-ease: var(--ease-smooth-out);
+
+  /* 20 plus to menu morph — the theme control becoming its own panel. The open
+     footprint is this control's, not the recipe's 183×172: three 36px rows, two
+     2px gaps and 8px of panel padding, so the hovered row's pill has room to
+     read as a separate surface instead of running into the border. */
+  --morph-open-dur: 350ms;
+  --morph-close-dur: 250ms;
+  --morph-ease: cubic-bezier(0.34, 1.25, 0.64, 1);
+  --morph-close-ease: var(--ease-smooth-out);
+  --morph-r-closed: 40px;
+  --morph-r-open: 14px;
+  --morph-fade-dur: 200ms;
+  --morph-slide: 40px;
+  --morph-rotate: 45deg;
+  --morph-scale: 0.97;
+  --morph-blur: 2px;
+  /* The open box, border box in: the panel inside it is `inset: 0`, so it gets
+     the padding box, which the 1px border makes 2px smaller in each axis. Its
+     content is 156×128 (8px of padding, three 36px rows, two 2px gaps), so the
+     box has to be 158×130 or the last row's hover pill lands on the border. */
+  --morph-w-open: 158px;
+  --morph-h-open: 130px;
+
+  /* 09 icon swap — the theme glyph, and the spinner turning into the check. */
+  --icon-swap-dur: 250ms;
+  --icon-swap-blur: 2px;
+  --icon-swap-start-scale: 0.25;
+  --icon-swap-ease: ease-in-out;
+
+  /* 10 success check — a mutation that landed. */
+  --check-opacity-dur: 500ms;
+  --check-rotate-dur: 500ms;
+  --check-rotate-from: 80deg;
+  --check-bob-dur: 500ms;
+  --check-y-amount: 10px;
+  --check-blur-dur: 500ms;
+  --check-blur-from: 6px;
+  --check-path-dur: 500ms;
+  --check-path-delay: 80ms;
+  --check-ease-out: var(--ease-smooth-out);
+  --check-ease-bob: cubic-bezier(0.34, 1.35, 0.64, 1);
+
+  /* 12 error state shake — a rejected sign-in or a failed mutation. */
+  --shake-distance: 6px;
+  --shake-overshoot: 4px;
+  --shake-dur-a: 80ms;
+  --shake-dur-b: 60ms;
+  --shake-ease: var(--ease-smooth-out);
+
+  /* 26 spinning counter — the bold uptime percent, on a window change. */
+  --reel-dur: 1400ms;
+  --reel-cell: 30px;
+  --reel-stagger: 90ms;
+  --reel-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* 27 toggle — the admin's switches. */
+  --toggle-dur: 350ms;
+  --toggle-track-w: 40px;
+  --toggle-track-h: 24px;
+  --toggle-thumb: 18px;
+  --toggle-ease: cubic-bezier(0.34, 1.35, 0.64, 1);
+
+  /* Liquid glass, the freefrontend half: how much colour the blur keeps. */
+  --glass-saturation: 1.4;
+}
+
+@theme inline {
+  /* Nunito Sans (linked in index.html) first, with the platform's own UI face
+     behind it: the app is set in one face everywhere rather than looking like
+     three different products across three operating systems, and an instance
+     that cannot reach fonts.googleapis.com still gets SF, Segoe's variable cut
+     or whatever the system considers its interface font. */
+  --font-sans:
+    "Nunito Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, sans-serif;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-up: var(--up);
+  --color-degraded: var(--degraded);
+  --color-down: var(--down);
+  --color-pending: var(--pending);
+  --color-maintenance: var(--maintenance);
+  --color-up-bar: var(--up-bar);
+  --color-degraded-bar: var(--degraded-bar);
+  --color-down-bar: var(--down-bar);
+  --color-pending-bar: var(--pending-bar);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  /* Optical sizing: display type wants tighter tracking than body copy does.
+     One rule, no per-heading utilities. */
+  :is(h1, h2, h3) {
+    letter-spacing: -0.021em;
+  }
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+
+  /* Lighter and a little more chroma, so the same semantics survive on a dark
+     background. */
+  --up: oklch(0.72 0.17 148);
+  --degraded: oklch(0.8 0.16 80);
+  --down: oklch(0.68 0.2 25);
+  --pending: oklch(0.6 0.02 255);
+  --maintenance: oklch(0.7 0.14 250);
+
+  /* The bar's fills need less lifting than the text tones do — they are already
+     bright — but the empty tone has to invert or a pending segment would glow. */
+  --up-bar: oklch(0.8 0.19 152);
+  --degraded-bar: oklch(0.84 0.16 82);
+  --down-bar: oklch(0.66 0.23 27);
+  --pending-bar: oklch(0.34 0.01 255);
+}
+
+@layer base {
+  /* Something for the hero's glass to refract. Fixed and behind everything, so
+     it costs one paint and never moves — three washes rather than the earlier
+     two, larger and softer, because a refraction layer needs something with
+     structure underneath it or it has nothing to bend. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        70% 55% at 12% -5%,
+        color-mix(in oklab, var(--up) 24%, transparent),
+        transparent 72%
+      ),
+      radial-gradient(
+        65% 50% at 92% 0%,
+        color-mix(in oklab, var(--maintenance) 22%, transparent),
+        transparent 72%
+      ),
+      radial-gradient(
+        80% 45% at 50% 105%,
+        color-mix(in oklab, var(--maintenance) 12%, transparent),
+        transparent 76%
+      );
+  }
+
+  /* Motion is decoration here; the page carries no meaning in it. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Liquid glass, on every card surface (DECISIONS #11 overrides #1's hero-only
+   scope). The opaque card is still the base and the translucent blur is still
+   the enhancement, so a browser without backdrop-filter gets a readable card
+   rather than a washed-out one. `contain` keeps the blur from being recomputed
+   against the rest of the page — layout/paint/style, not `strict`, because size
+   containment would collapse a content-sized card.
+
+   Blur is a variable because cost scales with surface count: a card blurs 12px
+   over 72% card colour, the hero alone keeps the stronger 24px over 55%. The
+   backdrop behind them never moves, so each surface composites once. */
+.glass {
+  position: relative;
+  overflow: hidden;
+  contain: layout paint style;
+  background: var(--card);
+  border-color: color-mix(in oklab, var(--foreground) 12%, transparent);
+  /* The specular half of freefrontend's liquid-glass recipe, and the half that
+     actually reads as glass: a lit hairline along the top inner edge, a shadow
+     along the bottom inner edge, and one soft ambient drop. All box-shadow —
+     no filter, no compositing cost, works with or without backdrop-filter. */
+  box-shadow:
+    inset 0 1px 0 0 oklch(1 0 0 / 0.55),
+    inset 0 -1px 0 0 oklch(0 0 0 / 0.06),
+    0 1px 2px -1px oklch(0 0 0 / 0.08),
+    0 12px 32px -18px oklch(0 0 0 / 0.35);
+}
+
+.dark .glass {
+  box-shadow:
+    inset 0 1px 0 0 oklch(1 0 0 / 0.09),
+    inset 0 -1px 0 0 oklch(0 0 0 / 0.25),
+    0 1px 2px -1px oklch(0 0 0 / 0.5),
+    0 16px 40px -24px oklch(0 0 0 / 0.7);
+}
+
+.glass-hero {
+  --glass-blur: 24px;
+  --glass-tint: 55%;
+}
+
+/* A glass surface a popover opens out of. `.glass` clips twice over — its own
+   `overflow: hidden`, and the `paint` leg of `contain` — which is what a card
+   wants and what an admin list cannot have: the last row's action menu opens
+   past the bottom edge. Relaxed here per surface rather than on `.glass`, so
+   every card that hosts nothing keeps its containment. Layout and style
+   containment stay; only paint goes. */
+.glass-popover {
+  overflow: visible;
+  contain: layout style;
+}
+
+/* And the panel's own `z-index` cannot lift it over the card that follows on the
+   page: `.glass` is a stacking context — `backdrop-filter` makes one, and so
+   does the `will-change` below it — so a z-index inside the card only orders
+   things against its siblings inside the card. The card is what has to rise, and
+   only while it holds a panel that is open or still closing; a card that is
+   raised the rest of the time would sit over its own neighbour for nothing.
+   20 rather than 40: every other card is `auto`, so 20 clears them all, and the
+   theme control's 30 stays above a card whose menu is on its way out. */
+.glass-popover:has(.t-dropdown.is-open, .t-dropdown.is-closing) {
+  z-index: 20;
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .glass {
+    background: color-mix(in oklab, var(--card) var(--glass-tint, 72%), transparent);
+    backdrop-filter: blur(var(--glass-blur, 12px)) saturate(var(--glass-saturation));
+    /* The FAQ's INP advice: promote the filtered node to its own layer so a
+       scroll does not re-sample the blur on the main thread. */
+    will-change: transform;
+  }
+}
+
+/* The hero alone refracts what is behind it: the same blur and saturation, with
+   `#flarepulse-refract` appended. Its own declaration on purpose — a browser that
+   cannot parse `url()` inside `backdrop-filter` drops this line at parse time and
+   keeps the plain blur above it, so the failure mode is the hero as it was.
+
+   Nothing here animates. The noise field and the displacement are computed once
+   per size, and the backdrop behind the hero does not move.
+
+   Off under reduced motion: a displaced, fringed backdrop is exactly the kind of
+   optical distortion that setting is asked to turn off, even standing still. */
+@supports (backdrop-filter: blur(1px)) {
+  .glass-hero {
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation))
+      url("#flarepulse-refract");
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glass-hero {
+      backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+    }
+  }
+}
+
+/* The text layer sits above the blur in its own stacking context. The hero's
+   `feDisplacementMap` reaches its backdrop only, which is why the copy stays
+   sharp while the page behind it bends. */
+.glass-content {
+  position: relative;
+  isolation: isolate;
+}
+
+/* ── Motion ─────────────────────────────────────────────────────────────────
+   Six transitions from transitions.dev, class names unchanged, each labelled
+   with the reference it came from and any deviation. The per-snippet
+   `prefers-reduced-motion` guards are deliberately absent: the reset in
+   @layer base above already flattens every transition and animation on the
+   page, and six copies of one rule is worse than one. */
+
+/* 16 tabs sliding — the hero's window switcher. The pill's width and transform
+   are written from the active button's measured box; CSS owns the tween. The
+   recipe keys off `aria-selected` inside a `role="tablist"`; these stay plain
+   buttons with `aria-pressed` (DECISIONS #6), because they switch a view and
+   own no tab panels. */
+.t-tabs {
+  position: relative;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 48px;
+  background: var(--tabs-bar-bg);
+}
+
+.t-tab {
+  position: relative;
+  z-index: 1;
+  height: 30px;
+  padding: 4px 12px;
+  border: 0;
+  border-radius: 48px;
+  background: transparent;
+  color: var(--tabs-text-muted);
+  cursor: pointer;
+  transition: color var(--tabs-dur) var(--tabs-ease);
+}
+
+.t-tab:hover,
+.t-tab[aria-pressed="true"] {
+  color: var(--tabs-text-active);
+}
+
+.t-tabs-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  height: 30px;
+  width: 0;
+  border-radius: 48px;
+  background: var(--tabs-pill-bg);
+  transform: translate(0, 0);
+  transition:
+    transform var(--tabs-dur) var(--tabs-ease),
+    width var(--tabs-dur) var(--tabs-ease);
+  will-change: transform, width;
+  pointer-events: none;
+}
+
+/* 21 accordion expand — the monitor card's response-time panel. Height animates
+   as a grid track (0fr → 1fr), so nothing measures anything and content of any
+   size collapses cleanly; the padding belongs to the inner element, because
+   padding on a 0fr track leaves a strip behind. The chevron flips with scaleY
+   rather than morphing its `d`, which is Chromium-only. */
+.t-acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--acc-collapse) var(--acc-ease);
+}
+
+.t-acc[data-open="true"] .t-acc-panel {
+  grid-template-rows: 1fr;
+  transition-duration: var(--acc-expand);
+}
+
+.t-acc-panel-inner {
+  overflow: hidden;
+  opacity: 0;
+  filter: blur(2px);
+  transition:
+    opacity var(--acc-collapse) var(--acc-ease),
+    filter var(--acc-collapse) var(--acc-ease);
+}
+
+.t-acc[data-open="true"] .t-acc-panel-inner {
+  opacity: 1;
+  filter: blur(0);
+  transition-duration: var(--acc-expand), var(--acc-expand);
+}
+
+.t-acc-chevron {
+  display: inline-flex;
+  transform: scaleY(1);
+  transform-origin: center;
+  transition: transform var(--acc-chevron) var(--acc-ease);
+}
+
+.t-acc-chevron :is(path, polyline) {
+  vector-effect: non-scaling-stroke;
+}
+
+.t-acc[data-open="true"] .t-acc-chevron {
+  transform: scaleY(-1);
+}
+
+/* 02 number pop-in — a value a check just changed. Applied to the whole value
+   rather than one element per glyph: per-character animation breaks text
+   selection and turns "99.95%" into eight strings for a screen reader. `Pop`
+   remounts the span when the value changes, which replays the keyframe. */
+@keyframes t-pop-in {
+  0% {
+    transform: translate(
+      calc(var(--digit-distance) * var(--digit-dir-x)),
+      calc(var(--digit-distance) * var(--digit-dir-y))
+    );
+    opacity: 0;
+    filter: blur(var(--digit-blur));
+  }
+  100% {
+    transform: translate(0, 0);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.t-pop {
+  display: inline-block;
+  animation: t-pop-in var(--digit-dur) var(--digit-ease) both;
+}
+
+/* 18 texts reveal — the hero copy rising in on first paint. The recipe's
+   `display: block` is left out: the headline is a flex row and block would
+   flatten it. No `.is-hiding` either, because the hero never leaves. */
+.t-stagger-line {
+  opacity: 0;
+  transform: translateY(var(--stagger-distance));
+  filter: blur(var(--stagger-blur));
+  transition:
+    opacity var(--stagger-dur) var(--stagger-ease),
+    transform var(--stagger-dur) var(--stagger-ease),
+    filter var(--stagger-dur) var(--stagger-ease);
+  will-change: transform, opacity, filter;
+}
+
+.t-stagger-line--2 {
+  transition-delay: var(--stagger-stagger);
+}
+
+.t-stagger.is-shown .t-stagger-line {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* 15 shimmer text — "working on it" copy, no spinner. Pure CSS: the string is
+   duplicated into `data-text` so the ::before layer can clip a sweeping
+   gradient to the same glyphs. */
+.t-shimmer {
+  position: relative;
+  display: inline-block;
+  color: var(--shimmer-base);
+}
+
+.t-shimmer::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 40%,
+    var(--shimmer-highlight) 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: var(--shimmer-band) 100%;
+  background-repeat: no-repeat;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: t-shimmer var(--shimmer-dur) var(--shimmer-ease) infinite;
+}
+
+@keyframes t-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+/* Two pieces the catalogue has no entry for, because they are FlarePulse-shaped: a
+   dot that shows the checking is still happening, and a heartbeat segment that
+   arrives instead of appearing. The ring reads `currentColor`, so each dot
+   pulses in its own status tone; segments are keyed by check time, so a new
+   check mounts a new element and animates exactly once. */
+@keyframes t-pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  70% {
+    box-shadow: 0 0 0 5px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.t-live-dot {
+  animation: t-pulse-ring 2.4s var(--ease-smooth-out) infinite;
+}
+
+@keyframes t-bar-in {
+  from {
+    transform: scaleY(0.3);
+    opacity: 0;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.t-bar-seg {
+  transform-origin: bottom;
+  animation: t-bar-in var(--duration-fast) var(--ease-smooth-out) both;
+}
+
+/* ── The seven transitions ────────────────────────────────────────────────────────
+   Same rules throughout: class names unchanged, colours pointed at FlarePulse
+   tokens, and the per-snippet `prefers-reduced-motion` guards left out because
+   the reset in @layer base already flattens every transition and animation. */
+
+/* 05 menu dropdown — the row-action menu in all three admin lists. Verbatim,
+   including the `.is-closing` state, whose setTimeout cleanup lives in
+   `row-menu.tsx`; without it the panel would snap from its rest scale instead
+   of shrinking out. */
+.t-dropdown {
+  /* Load-bearing, and not redundant with the `absolute` utility on the same
+     element: this file is unlayered, Tailwind's utilities are in @layer
+     utilities, so `.glass { position: relative }` above outranks them. Without
+     this the panel stays in flow — 160px of it — which is what pushed every
+     `⋯` trigger left of its row's edge and stretched the row taller than the
+     content it belongs to. Declared here rather than dropped from `.glass`,
+     which needs its own positioning for the specular layer. */
+  position: absolute;
+  transform-origin: top left;
+  transform: scale(var(--dropdown-pre-scale));
+  opacity: 0;
+  /* `visibility` rather than `display` or a conditional mount: a panel left at
+     `opacity: 0` is still focusable and still read aloud, and `display: none`
+     would kill the opening transition because the element has no previous
+     computed style to leave. Hidden visibility takes it out of the tab order and
+     the accessibility tree while keeping it laid out, so the transition runs. */
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    transform var(--dropdown-open-dur) var(--dropdown-ease),
+    opacity var(--dropdown-open-dur) var(--dropdown-ease);
+  will-change: transform, opacity;
+}
+
+.t-dropdown:is(.is-open, .is-closing) {
+  visibility: visible;
+}
+
+.t-dropdown[data-origin="top-right"] {
+  transform-origin: top right;
+}
+
+.t-dropdown[data-origin="bottom-right"] {
+  transform-origin: bottom right;
+}
+
+.t-dropdown.is-open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.t-dropdown.is-closing {
+  transform: scale(var(--dropdown-closing-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--dropdown-close-dur) var(--dropdown-ease),
+    opacity var(--dropdown-close-dur) var(--dropdown-ease);
+}
+
+/* 09 icon swap — two glyphs in one grid cell. Used twice: the theme trigger's
+   Desktop/Sun/Moon, and the spinner exchanging itself for the check. */
+.t-icon-swap {
+  position: relative;
+  display: inline-grid;
+}
+
+.t-icon-swap .t-icon {
+  grid-area: 1 / 1;
+  transition:
+    opacity var(--icon-swap-dur) var(--icon-swap-ease),
+    filter var(--icon-swap-dur) var(--icon-swap-ease),
+    transform var(--icon-swap-dur) var(--icon-swap-ease);
+  will-change: opacity, filter, transform;
+}
+
+.t-icon-swap .t-icon {
+  opacity: 0;
+  filter: blur(var(--icon-swap-blur));
+  transform: scale(var(--icon-swap-start-scale));
+}
+
+/* The recipe pairs exactly two icons via data-state a|b. This slot holds three
+   (system/light/dark, and idle/spin/check), so the match is by name rather than
+   by an a/b pair — same transition, one selector instead of four. */
+.t-icon-swap[data-state="a"] .t-icon[data-icon="a"],
+.t-icon-swap[data-state="b"] .t-icon[data-icon="b"],
+.t-icon-swap[data-state="c"] .t-icon[data-icon="c"] {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+
+/* 10 success check — a mutation that landed. The bob and blur are scaled down
+   from the recipe's 40px/10px: this check is 16px inside a button, not a
+   full-page confirmation, and a 40px bob would launch it out of its own row.
+   The dasharray placeholder is not used — `pending.tsx` measures the real path
+   with getTotalLength() on mount, which is the recipe's own recommendation. */
+.t-success-check {
+  display: inline-block;
+  transform-origin: center;
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+
+.t-success-check svg {
+  display: block;
+  overflow: visible;
+}
+
+.t-success-check[data-state="in"] {
+  animation:
+    t-check-fade var(--check-opacity-dur) var(--ease-smooth-out) forwards,
+    t-check-rotate var(--check-rotate-dur) var(--ease-smooth-out) forwards,
+    t-check-blur var(--check-blur-dur) var(--check-ease-out) forwards,
+    t-check-bob var(--check-bob-dur) var(--check-ease-bob) forwards;
+}
+
+.t-success-check[data-state="in"] svg path {
+  animation: t-check-draw var(--check-path-dur) var(--ease-smooth-out)
+    var(--check-path-delay) forwards;
+}
+
+@keyframes t-check-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes t-check-rotate {
+  from {
+    transform: rotate(var(--check-rotate-from));
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes t-check-blur {
+  from {
+    filter: blur(var(--check-blur-from));
+  }
+  to {
+    filter: blur(0);
+  }
+}
+
+@keyframes t-check-bob {
+  from {
+    translate: 0 var(--check-y-amount);
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+@keyframes t-check-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* The spinner half of "spinner to check morph". The catalogue has no spinner —
+   it is one rotation on a dashed ring, and the reduced-motion reset stops it
+   like everything else, which is fine because the button is also disabled and
+   says what it is doing. */
+@keyframes t-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.t-spin {
+  display: inline-block;
+  animation: t-spin 900ms var(--ease-linear) infinite;
+}
+
+/* 12 error state shake — a rejected sign-in, a mismatched confirmation, a
+   failed mutation. Only the shake is taken: the recipe's `.t-error-msg` reveal
+   and its 3-second auto-revert are React's job here, because the message is a
+   conditionally rendered `role="alert"` that must stay until the next attempt
+   rather than fade out from under the reader. `.is-shaking` stays orthogonal to
+   `.is-error` so the shake can replay without flickering the error state. */
+.t-input {
+  transition: border-color 150ms ease-out;
+  will-change: transform;
+}
+
+.t-input.is-error {
+  border-color: var(--destructive);
+  transition: border-color var(--revert-dur, 280ms) ease-out;
+}
+
+.t-input.is-shaking {
+  animation: t-input-shake
+    calc(var(--shake-dur-a) * 2 + var(--shake-dur-b) * 2) linear;
+}
+
+/* Cumulative leg durations as a fraction of 280ms (80, 80, 60, 60). Tuning the
+   segment variables means recomputing these literals. */
+@keyframes t-input-shake {
+  0% {
+    transform: translateX(0);
+    animation-timing-function: var(--shake-ease);
+  }
+  28.57% {
+    transform: translateX(var(--shake-distance));
+    animation-timing-function: var(--shake-ease);
+  }
+  57.14% {
+    transform: translateX(calc(var(--shake-distance) * -1));
+    animation-timing-function: var(--shake-ease);
+  }
+  78.57% {
+    transform: translateX(var(--shake-overshoot));
+    animation-timing-function: var(--shake-ease);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* 20 plus to menu morph — the theme control. The trigger is the surface: a
+   round icon button whose box grows into the panel listing System, Light and
+   Dark, which is the recipe's stated case for choosing this over 05. The open
+   width and height are hardcoded, as the recipe warns they must be, but to this
+   control's own footprint rather than its 183×172. `overflow: hidden` is
+   load-bearing — it clips the panel while the box is still growing. */
+.t-morph {
+  /* Anchored to the top-right of a 36px wrapper rather than sitting in flow: the
+     box grows to 158×130, and a control in a header row must open over the page
+     instead of shoving its neighbours out of the way. Growth is leftward and
+     downward, out of the corner the trigger occupies. */
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 30;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--morph-r-closed);
+  overflow: hidden;
+  transition:
+    width var(--morph-close-dur) var(--morph-close-ease),
+    height var(--morph-close-dur) var(--morph-close-ease),
+    border-radius var(--morph-close-dur) var(--morph-close-ease);
+}
+
+.t-morph[data-open="true"] {
+  width: var(--morph-w-open);
+  height: var(--morph-h-open);
+  border-radius: var(--morph-r-open);
+  transition:
+    width var(--morph-open-dur) var(--morph-ease),
+    height var(--morph-open-dur) var(--morph-ease),
+    border-radius var(--morph-open-dur) var(--morph-ease);
+}
+
+/* Pinned to the corner the box grows out of, so it stays put instead of being
+   shoved around by the resize. The negative inset is what centres the glyph: an
+   absolute child is placed against `.t-morph`'s padding box, which its 1px
+   border makes 34px wide, so a 36px trigger pinned at `0 0` sits a pixel left
+   of the round box and a pixel below it. The `visibility` leg is what keeps the
+   faded-out trigger out of the tab order: opacity alone leaves an invisible
+   button focusable, and the delay holds the flip until the fade has finished. */
+.t-morph-plus {
+  position: absolute;
+  inset: -1px -1px auto auto;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  visibility: visible;
+  transition:
+    opacity var(--morph-fade-dur) var(--morph-close-ease),
+    transform var(--morph-open-dur) var(--morph-close-ease),
+    filter var(--morph-fade-dur) var(--morph-close-ease),
+    visibility 0s linear 0s;
+}
+
+.t-morph[data-open="true"] .t-morph-plus {
+  opacity: 0;
+  transform: translateX(calc(-1 * var(--morph-slide))) rotate(var(--morph-rotate));
+  filter: blur(var(--morph-blur));
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--morph-fade-dur) var(--morph-close-ease),
+    transform var(--morph-open-dur) var(--morph-close-ease),
+    filter var(--morph-fade-dur) var(--morph-close-ease),
+    visibility 0s linear var(--morph-fade-dur);
+}
+
+.t-morph-menu {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: translateX(var(--morph-slide)) scale(var(--morph-scale));
+  filter: blur(var(--morph-blur));
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--morph-fade-dur) var(--morph-close-ease),
+    transform var(--morph-open-dur) var(--morph-close-ease),
+    filter var(--morph-fade-dur) var(--morph-close-ease),
+    visibility 0s linear var(--morph-fade-dur);
+}
+
+.t-morph[data-open="true"] .t-morph-menu {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  filter: blur(0);
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity var(--morph-fade-dur) var(--morph-close-ease),
+    transform var(--morph-open-dur) var(--morph-close-ease),
+    filter var(--morph-fade-dur) var(--morph-close-ease),
+    visibility 0s linear 0s;
+}
+
+/* 26 spinning counter — the bold uptime percent, re-rolled when the visitor
+   changes the window. One column per glyph, each clipping a strip of ten cells
+   that JS translates by (spins * 10 + digit) cells. The mask fades the window's
+   edges instead of hard-cropping. */
+.t-reel {
+  display: inline-flex;
+  align-items: center;
+  height: var(--reel-cell);
+  font-variant-numeric: tabular-nums;
+}
+
+.t-reel-col {
+  position: relative;
+  height: var(--reel-cell);
+  overflow: hidden;
+}
+
+/* Deviation: the recipe masks the window's edges permanently. Here the fade is
+   only applied while the reel is rolling — a resting uptime percent is a number
+   the visitor has to read, and a number with faded top and bottom edges is a
+   number read worse. */
+.t-reel[data-spinning="true"] .t-reel-col {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 22%,
+    #000 78%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 22%,
+    #000 78%,
+    transparent 100%
+  );
+}
+
+.t-reel-strip {
+  display: flex;
+  flex-direction: column;
+  will-change: transform, filter;
+}
+
+.t-reel-digit {
+  height: var(--reel-cell);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The motion streak. The recipe decays an feGaussianBlur's stdDeviation per
+   column; CSS cannot animate that attribute, and CSS `blur()` would smear a
+   10px-wide digit sideways. So the vertical-only filter is mounted once in the
+   page and switched on for the columns that are spinning — on/off rather than
+   interpolated, which is the cheap version of the same idea. */
+.t-reel-strip.is-spinning {
+  filter: url("#flarepulse-reel-blur");
+}
+
+/* 27 toggle — the admin's switches. The control stays a real
+   `<input type="checkbox">`: `appearance: none` turns the input itself into the
+   track and `::before` is the thumb, so `name`, `defaultChecked`, `FormData`,
+   the label association and keyboard behaviour are all the browser's, and no
+   JavaScript owns the state.
+
+   Deviation: the recipe's double-bounce keyframes and its `.is-init` guard are
+   replaced by the same overshoot easing on a `translate` transition. A
+   transition does not run on first paint, which is the exact problem `.is-init`
+   exists to solve — so the bounce survives and the class does not. */
+.t-toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: var(--toggle-track-w);
+  height: var(--toggle-track-h);
+  margin: 0;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--foreground) 20%, transparent);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-smooth-out);
+}
+
+.t-toggle:checked {
+  background: var(--up);
+}
+
+.t-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.t-toggle:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.t-toggle::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 3px;
+  width: var(--toggle-thumb);
+  height: var(--toggle-thumb);
+  border-radius: 999px;
+  background: oklch(1 0 0);
+  box-shadow:
+    0 1px 2px oklch(0 0 0 / 0.28),
+    0 0 0 0.5px oklch(0 0 0 / 0.06);
+  translate: 0 -50%;
+  transition: translate var(--toggle-dur) var(--toggle-ease);
+}
+
+.t-toggle:checked::before {
+  translate: calc(var(--toggle-track-w) - var(--toggle-thumb) - 6px) -50%;
+}
+
+/* The gooey pill (gooey.jakubantalik.com). The travelling pill and a ghost that
+   lags behind it share one filtered layer; the metaball chain — blur, an alpha
+   contrast matrix, then compositing the original graphic back inside the
+   resulting silhouette — makes the two read as one liquid shape that stretches
+   apart mid-travel and merges again at rest.
+
+   The layer holds no text. That is the whole trick: `feComposite atop` clips to
+   the goo silhouette, so a label inside this layer would be eaten wherever the
+   blob is not. Labels are the `.t-tab` buttons, composited above at z-index 1. */
+.t-goo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  filter: url("#flarepulse-goo");
+}
+
+.t-tabs-ghost {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 30px;
+  width: 0;
+  border-radius: 48px;
+  background: var(--tabs-pill-bg);
+  transform: translate(0, 0);
+  /* Slower than the pill on purpose: the lag is what there is to merge with. */
+  transition:
+    transform calc(var(--tabs-dur) * 2.2) var(--tabs-ease),
+    width calc(var(--tabs-dur) * 2.2) var(--tabs-ease);
+  will-change: transform, width;
+  pointer-events: none;
+}
+
+

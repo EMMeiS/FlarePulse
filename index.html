@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/flarepulse-mascot.svg" type="image/svg+xml" />
+    <title>FlarePulse status</title>
+    <meta name="description" content="Uptime and incident history, served by a single Cloudflare Worker." />
+    <!-- Nunito Sans, the app's type. One variable file covers 300-800, so the
+         normal/medium/semibold steps the UI already uses cost no extra request,
+         and the optical-size axis lets the display headings tighten themselves.
+         `display=swap` renders in the system font first rather than holding the
+         page on a network round trip, which is also the fallback on an instance
+         with no outbound access. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,300..800&display=swap"
+    />
+    <script>
+      // Before first paint, so a dark-mode visitor never sees a white flash.
+      // Keep the key in sync with THEME_KEY in frontend/components/theme-toggle.tsx.
+      const theme = localStorage.getItem("flarepulse-theme") ?? "system";
+      if (theme === "dark" || (theme === "system" && matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/frontend/main.tsx"></script>
+  </body>
+</html>

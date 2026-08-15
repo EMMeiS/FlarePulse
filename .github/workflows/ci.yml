@@ -1,0 +1,32 @@
+name: CI
+
+# The full gate on every push and pull request: types, then the Vitest suites in
+# workerd against real D1 and Durable Object bindings, then the build. No deploy
+# step — releases are one `npm run deploy` from a maintainer's machine, which is
+# deliberate (docs/DEPLOY.md).
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build

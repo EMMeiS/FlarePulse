@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.wrangler/
+.dev.vars
+.dev.vars.*
+*.log
+.vite/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local scratch: reference and debug screenshots, working notes. None of it is
+# project content.
+/bar.png
+/footer.png
+/signin.png
+/screnshots/
+/cost.md

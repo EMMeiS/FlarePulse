@@ -1,0 +1,68 @@
+{
+  "name": "flarepulse",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Uptime monitoring and status page running as a single Cloudflare Worker",
+  "license": "MIT",
+  "author": "EMMeiS",
+  "homepage": "https://github.com/EMMeiS/FlarePulse#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EMMeiS/FlarePulse.git"
+  },
+  "keywords": [
+    "uptime-monitoring",
+    "status-page",
+    "cloudflare-workers",
+    "durable-objects",
+    "d1",
+    "hono",
+    "react"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite dev",
+    "demo": "node scripts/demo.mjs && vite dev",
+    "demo:seed": "node scripts/demo.mjs",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit && tsc -p tests/tsconfig.json",
+    "cf-typegen": "wrangler types",
+    "setup": "node scripts/setup.mjs",
+    "db:migrate": "wrangler d1 migrations apply DB --remote",
+    "deploy": "npm run db:migrate && vite build && wrangler deploy"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "hono": "4.13.2",
+    "radix-ui": "^1.6.7",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "reicon-react": "1.2.0",
+    "tailwind-merge": "^3.6.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "1.52.1",
+    "@cloudflare/vitest-pool-workers": "0.21.3",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "6.0.5",
+    "tailwindcss": "4.3.3",
+    "typescript": "7.0.2",
+    "vite": "8.2.1",
+    "vitest": "4.1.10",
+    "wrangler": "4.123.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "workerd@1.20260811.1": true
+  }
+}

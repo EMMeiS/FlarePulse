@@ -1,0 +1,43 @@
+<svg viewBox="24 48 112 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="flareGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FF9D5C"/>
+      <stop offset="60%" stop-color="#FA7A3E"/>
+      <stop offset="100%" stop-color="#E8502B"/>
+    </linearGradient>
+    <linearGradient id="pulseGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4ADE80"/>
+      <stop offset="100%" stop-color="#16A34A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ground shadow -->
+  <ellipse cx="80" cy="158" rx="42" ry="7" fill="#1A0E05" opacity="0.15"/>
+
+  <!-- body: warm flame gradient -->
+  <path d="M112,100
+           C128,105 130,125 118,140
+           C112,148 104,152 96,153
+           C88,154 72,154 64,153
+           C56,152 48,148 42,140
+           C30,125 32,105 48,100
+           L112,100 Z"
+        fill="url(#flareGrad)" stroke="#241407" stroke-width="7" stroke-linejoin="round"/>
+
+  <!-- crown: heartbeat spikes recolored green, matching an "operational" status green -->
+  <path d="M48,100 L58,70 L66,100 L76,55 L86,100 L96,75 L112,100 Z"
+        fill="url(#pulseGrad)" stroke="#241407" stroke-width="7" stroke-linejoin="round"/>
+
+  <!-- eyes -->
+  <circle cx="63" cy="118" r="8.5" fill="#241407"/>
+  <circle cx="97" cy="118" r="8.5" fill="#241407"/>
+  <circle cx="65.5" cy="115" r="2.6" fill="#FFFFFF"/>
+  <circle cx="99.5" cy="115" r="2.6" fill="#FFFFFF"/>
+
+  <!-- blush -->
+  <ellipse cx="52" cy="130" rx="7" ry="4" fill="#FF6F4D" opacity="0.35"/>
+  <ellipse cx="108" cy="130" rx="7" ry="4" fill="#FF6F4D" opacity="0.35"/>
+
+  <!-- smile -->
+  <path d="M68,134 Q80,144 92,134" fill="none" stroke="#241407" stroke-width="4" stroke-linecap="round"/>
+</svg>
